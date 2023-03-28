@@ -47,5 +47,6 @@ describe('GET/not-a-route', () => {
         return request(app)
         .get('/not-a-route')
         .expect(404)
+        .send({ msg: 'This route is not available!' });
     });
 });
