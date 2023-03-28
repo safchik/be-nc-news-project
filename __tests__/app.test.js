@@ -50,3 +50,41 @@ describe('GET/not-a-route', () => {
         .send({ msg: 'This route is not available!' });
     });
 });
+
+describe('GET/api/articles/:article_id', () => {
+    it('responds with status 200 and requested article', () => {
+        const articleId = 1;
+        return request(app)
+        .get(`/api/articles/${articleId}`)
+        .expect(200)
+        .then((res) => {
+            const { body } = res;
+            const { article } = body;
+            expect(article).toHaveProperty('author', expect.any(String));
+            expect(article).toHaveProperty('title', expect.any(String));
+            expect(article).toHaveProperty('article_id', articleId);
+            expect(article).toHaveProperty('body', expect.any(String));
+            expect(article).toHaveProperty('topic', expect.any(String));
+            expect(article).toHaveProperty('created_at', expect.any(String));
+            expect(article).toHaveProperty('votes', expect.any(Number));
+            expect(article).toHaveProperty('article_img_url', expect.any(String));
+        });
+    });
+    it('responds with status 404 if article_id is not found', () => {
+        const articleId = 999999;
+        return request(app)
+        .get(`/api/articles/${articleId}`)
+        .then((res) => {
+            const { body } = res;
+            const { msg } = body;
+            expect(msg).toBe(`Article ${articleId} not found`);
+        });
+    });
+    it('responds with status 400 if article_id is not a number', () => {
+        const articleId = 'not-a-number';
+        return request(app)
+        .get(`/api/articles/${articleId}`)
+        .expect(400)
+        .send({msg: "Invalid article ID"});
+    });
+});
