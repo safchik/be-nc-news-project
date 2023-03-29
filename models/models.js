@@ -20,12 +20,14 @@ exports.fetchArticleById = (article_id) => {
 exports.fetchArticles = () => { 
   return db.query(`
   SELECT articles.*, 
-  (SELECT COUNT (comments.comment_id) FROM comments WHERE comments.article_id = articles.article_id) AS comment_count
+  COUNT(comments.comment_id) ::INT AS comment_count 
   FROM articles
+  LEFT JOIN comments ON articles.article_id = comments.article_id
+  GROUP BY articles.article_id
   ORDER BY created_at DESC;
   `)
   .then((result) => {
-    if (result.length === 0) {
+    if (result.rows.length === 0) {
       return Promise.reject({ status: 404, msg: 'No articles found' });
     }
     return result.rows;

@@ -36,14 +36,12 @@ exports.getArticleById = (req, res, next) => {
 
 
 exports.getArticles = (req, res, next) => {
-
+  
   fetchArticles()
-    .then((articles) => {
-      const newArticles = articles.map(article => Object.assign({}, article, {
-        comment_count: parseInt(article.comment_count) //Object.assign because couldnt use spread operator
-      }));
-      res.status(200).send(newArticles);
-    })
-    .catch(next);
-}
+  .then((articles) => {
+    res.status(200).send(articles);
+  })
+  .catch(next);
+};
+
 
