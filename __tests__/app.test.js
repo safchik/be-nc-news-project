@@ -101,7 +101,7 @@ describe("GET /api/articles", () => {
         .expect(200)
         .then((res) => {
           const { body } = res;
-          const  articles  = body;
+          const { articles }  = body;
           expect(Array.isArray(articles)).toBe(true);
           expect(articles.length).toBeGreaterThan(0);
           articles.forEach((article) => {
