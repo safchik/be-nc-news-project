@@ -73,6 +73,25 @@ exports.addNewComment = (commentAdd) => {
     });
 };
 
+exports.updateArticleById = (article_id, newVotes) => {
+  if (newVotes === null) {
+    return Promise.reject({ status: 400, msg: 'Invalid votes value' });
+  }
 
+  const sql = `
+    UPDATE articles
+    SET votes = GREATEST(0, $2)
+    WHERE article_id = $1
+    RETURNING *;
+  `;
+  const values = [article_id, newVotes];
+  return db.query(sql, values)
+    .then(({ rows }) => {
+      if(rows.length === 0) {
+        return Promise.reject({ status: 404, msg: 'No articles found' });
+      }
+      return rows[0];
+    });
+};
 
 
