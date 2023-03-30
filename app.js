@@ -3,7 +3,8 @@ const {getTopics,
       getArticleById, 
       getArticles, 
       getComments, 
-      postComments } = require('./controllers/controllers');
+      postComments,
+      updateArticle } = require('./controllers/controllers');
 
 const app = express();
 app.use(express.json());
@@ -21,6 +22,8 @@ app.get('/api/articles', getArticles);
 app.get(`/api/articles/:article_id/comments`, getComments);
 
 app.post('/api/articles/:article_id/comments', postComments);
+
+
 
 app.all('/*', (req, res) => {
   res.status(404).send({msg: 'Route not found'})
