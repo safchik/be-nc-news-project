@@ -167,4 +167,16 @@ describe("GET /api/articles/:article_id/comments", () => {
             expect(msg).toBe("Invalid article ID");
         });
     });
+    it("responds with an empty array if article_id is valid but has no comments", () => {
+        const articleId = 2;
+        return request(app)
+          .get(`/api/articles/${articleId}/comments`)
+          .expect(200)
+          .then((res) => {
+            const { body } = res;
+            const { comments } = body;
+            expect(Array.isArray(comments)).toBe(true);
+            expect(comments.length).toBe(0);
+          });
+      });
 });
