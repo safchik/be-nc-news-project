@@ -119,3 +119,64 @@ describe("GET /api/articles", () => {
     });
     
 });
+
+describe("GET /api/articles/:article_id/comments", () => {
+    it("responds with an array of comments for the given article_id of which each comment should have the correct properties", () => {
+        const articleId = 1
+        return request(app)
+        .get(`/api/articles/${articleId}/comments`)
+        .expect(200)
+        .then((res) => {
+            const { body } = res;
+            const { comments }  = body;
+            expect(Array.isArray(comments)).toBe(true);
+            expect(comments.length).toBeGreaterThan(0);
+            comments.forEach((comment) => {
+                expect(comment).toHaveProperty("comment_id", expect.any(Number));
+                expect(comment).toHaveProperty("votes", expect.any(Number));
+                expect(comment).toHaveProperty("created_at", expect.any(String));
+                expect(comment).toHaveProperty("author", expect.any(String));
+                expect(comment).toHaveProperty("body", expect.any(String));
+                expect(comment).toHaveProperty("article_id", expect.any(Number));
+            });
+
+            const firstElementDate = new Date(comments[0].created_at).getDate();
+            const lastElementDate = new Date(comments[comments.length - 1].created_at).getDate();
+              
+            expect(firstElementDate).toBeGreaterThan(lastElementDate);
+        });
+    });
+    it('responds with status 404 if article_id is not found', () => {
+        const articleId = 999999;
+        return request(app)
+          .get(`/api/articles/${articleId}`)
+          .expect(404)
+          .then((res) => {
+            const { body } = res;
+            expect(body.msg).toBe(`Article ${articleId} not found`);
+        });
+    });
+    it('responds with status 400 if article_id is not a number', () => {
+        const articleId = 'not_a_number';
+        return request(app)
+          .get(`/api/articles/${articleId}`)
+          .expect(400)
+          .then((res) => {
+            const { body } = res;
+            const { msg } = body;
+            expect(msg).toBe("Invalid article ID");
+        });
+    });
+    it("responds with an empty array if article_id is valid but has no comments", () => {
+        const articleId = 2;
+        return request(app)
+          .get(`/api/articles/${articleId}/comments`)
+          .expect(200)
+          .then((res) => {
+            const { body } = res;
+            const { comments } = body;
+            expect(Array.isArray(comments)).toBe(true);
+            expect(comments.length).toBe(0);
+          });
+      });
+});
