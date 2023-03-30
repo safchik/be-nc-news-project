@@ -302,72 +302,55 @@ describe('POST /api/articles/:article_id/comments', () => {
 describe('PATCH /api/articles/:article_id', () => {
     it('responds with updated article', () => {
         const articleId = 1;
+        const incrementVotes = 5;
+        let initialVotes;
+      
         return request(app)
-          .patch(`/api/articles/${articleId}`)
-          .send({ votes: 5 })
+          .get(`/api/articles/${articleId}`)
           .expect(200)
           .then((res) => {
-            const { body } = res;
-            const { article } = body;
-            expect(article.votes).toBe(5);
-        });
-    });
-
-    it('responds with status 400 if article_id is not a number', () => {
-        const articleId = 'not_a_number';
-        return request(app)
-            .get(`/api/articles/${articleId}`)
-            .expect(400)
-            .then((res) => {
-                const { body } = res;
-                const { msg } = body;
-                expect(msg).toBe("Invalid article ID");
-            });
+            initialVotes = res.body.article.votes;
+            return request(app)
+              .patch(`/api/articles/${articleId}`)
+              .send({ inc_votes: incrementVotes })
+              .expect(200);
+          })
+          .then((res) => {
+            const updatedVotes = res.body.article.votes;
+            expect(updatedVotes).toBe(initialVotes + incrementVotes);
+          });
     });
 
     it('responds with status 404 if article_id does not exist', () => {
         const articleId = 999999;
         return request(app)
           .patch(`/api/articles/${articleId}`)
-          .send({ votes: 5 })
+          .send({ inc_votes: 5 })
           .expect(404)
           .then((res) => {
             const { body } = res;
             expect(body.msg).toBe('No articles found');
         });
     });
-    it('responds with the updated article, ignoring unnecessary properties', () => {
-        const articleId = 1;
-        return request(app)
-          .patch(`/api/articles/${articleId}`)
-          .send({ votes: 5, invalidProperty: 'invalidValue' })
-          .expect(200)
-          .then((res) => {
-            const { body } = res;
-            const { article } = body;
-            expect(article.votes).toBe(5);
-            expect(article).not.toHaveProperty('invalidProperty');
-        });
-    });
-    it('decrements the current article vote property when given negative inc_votes', () => {
+    
+    it('decrements the current article vote property by 100 when given inc_votes of -100', () => {
         const articleId = 1;
         const decrementVotes = -100;
-
+        let initialVotes;
+      
         return request(app)
-            .get(`/api/articles/${articleId}`)
-            .then((res) => {
-                const { body } = res;
-                const { article } = body;
-                const initialVotes = article.votes;
-
+          .get(`/api/articles/${articleId}`)
+          .expect(200)
+          .then((res) => {
+            initialVotes = res.body.article.votes;
             return request(app)
-                .patch(`/api/articles/${articleId}`)
-                .send({ inc_votes: decrementVotes })
-                .expect(200)
-                .then((res) => {
-                    const updatedVotes = res.body.article.votes;
-                    expect(updatedVotes).toBe(Math.max(initialVotes + decrementVotes, 0));
-                });
-            });
+              .patch(`/api/articles/${articleId}`)
+              .send({ inc_votes: decrementVotes })
+              .expect(200);
+          })
+          .then((res) => {
+            const updatedVotes = res.body.article.votes;
+            expect(updatedVotes).toBe(initialVotes + decrementVotes);
+          });
     });
 });

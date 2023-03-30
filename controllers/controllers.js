@@ -3,7 +3,7 @@ const { fetchTopics,
   fetchArticles,
   fetchComments,
   addNewComment,
-  updateArticleById
+  incrementArticleVotes
 } = require("../models/models")
 
 
@@ -93,9 +93,9 @@ exports.postComments = (req, res, next) => {
 
 exports.updateArticle = (req, res, next) => {
   const { article_id } = req.params;
-  const { votes } = req.body;
+  const { inc_votes } = req.body;
 
-  updateArticleById(article_id, votes)
+  incrementArticleVotes(article_id, inc_votes)
     .then(updatedArticle => {
       res.status(200).send({ article: updatedArticle});
     })
