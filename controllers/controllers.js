@@ -118,7 +118,7 @@ exports.removeComment = (req, res, next) => {
 exports.getAllUsers = (req, res, next) => {
   fetchAllUsers()
     .then((users) => {
-      res.status(200).json({ users });
+      res.status(200).send({ users });
     })
     .catch(next);
 };
