@@ -4,6 +4,7 @@ const { fetchTopics,
   fetchComments,
   addNewComment,
   incrementArticleVotes
+  
 } = require("../models/models")
 
 
@@ -101,3 +102,5 @@ exports.updateArticle = (req, res, next) => {
     })
     .catch(next);
 };
+
+

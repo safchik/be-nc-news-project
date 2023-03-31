@@ -300,57 +300,95 @@ describe('POST /api/articles/:article_id/comments', () => {
 });
 
 describe('PATCH /api/articles/:article_id', () => {
-    it('responds with updated article', () => {
+    it('increments the current article vote property by the given amount', () => {
         const articleId = 1;
-        const incrementVotes = 5;
-        let initialVotes;
-      
+        const initialVotes = 100;
+        const incrementVotes = 15;
         return request(app)
-          .get(`/api/articles/${articleId}`)
+          .patch(`/api/articles/${articleId}`)
+          .send({ inc_votes: incrementVotes })
           .expect(200)
           .then((res) => {
-            initialVotes = res.body.article.votes;
-            return request(app)
-              .patch(`/api/articles/${articleId}`)
-              .send({ inc_votes: incrementVotes })
-              .expect(200);
-          })
+            const updatedArticle = res.body.article;
+            const updatedVotes = updatedArticle.votes;
+            expect(updatedVotes).toBe(initialVotes + incrementVotes);
+            expect(updatedArticle).toMatchObject({
+              article_id: articleId,
+              title: expect.any(String),
+              body: expect.any(String),
+              votes: expect.any(Number),
+              topic: expect.any(String),
+              author: expect.any(String),
+              created_at: expect.any(String),
+            });
+          });
+      });
+
+    it('decrements the current article vote property by the given amount when given inc_votes of negative value', () => {
+        const articleId = 1;
+        const initialVotes = 100;
+        const decrementVotes = -90;
+        return request(app)
+          .patch(`/api/articles/${articleId}`)
+          .send({ inc_votes: decrementVotes })
+          .expect(200)
           .then((res) => {
             const updatedVotes = res.body.article.votes;
-            expect(updatedVotes).toBe(initialVotes + incrementVotes);
-          });
+            expect(updatedVotes).toBe(initialVotes + decrementVotes);
+        });
     });
 
-    it('responds with status 404 if article_id does not exist', () => {
-        const articleId = 999999;
+    test('responds with updated article', () => {
+        const articleId = 1;
+        return request(app)
+          .patch(`/api/articles/${articleId}`)
+          .send({ inc_votes: 10 })
+          .expect(200)
+          .then((res) => {
+            const expectedKeys = ['article_id', 'title', 'body', 'votes', 'topic', 'author', 'created_at'];
+            expect(Object.keys(res.body.article)).toEqual(expect.arrayContaining(expectedKeys));
+            expect(res.body.article.votes).toBe(110);
+          });
+      });
+      
+    it('returns a 404 error for invalid article ID', () => {
+        const articleId = 999999999;
         return request(app)
           .patch(`/api/articles/${articleId}`)
           .send({ inc_votes: 5 })
           .expect(404)
           .then((res) => {
             const { body } = res;
-            expect(body.msg).toBe('No articles found');
+            expect(body.msg).toBe('Article not found');
         });
     });
     
-    it('decrements the current article vote property by 100 when given inc_votes of -100', () => {
+    it('returns a 400 error for invalid vote value', () => {
         const articleId = 1;
-        const decrementVotes = -100;
-        let initialVotes;
-      
+        const inc = 'not-a-num';
         return request(app)
-          .get(`/api/articles/${articleId}`)
+          .patch(`/api/articles/${articleId}`)
+          .send({ inc_votes: inc })
+          .expect(400)
+          .then((res) => {
+            const { body } = res;
+            expect(body.msg).toBe('Invalid vote value');
+        });
+    });
+    
+    it('returns the article without any changes', () => {
+        const articleId = 1;
+        const votes = data.articleData[0].votes;
+        return request(app)
+          .patch(`/api/articles/${articleId}`)
+          .send({inc_votes: 0})
           .expect(200)
           .then((res) => {
-            initialVotes = res.body.article.votes;
-            return request(app)
-              .patch(`/api/articles/${articleId}`)
-              .send({ inc_votes: decrementVotes })
-              .expect(200);
-          })
-          .then((res) => {
             const updatedVotes = res.body.article.votes;
-            expect(updatedVotes).toBe(initialVotes + decrementVotes);
-          });
+            expect(updatedVotes).toBe(votes);
+        });
     });
 });
+
+
+  

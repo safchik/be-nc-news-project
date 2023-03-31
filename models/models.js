@@ -74,10 +74,10 @@ exports.addNewComment = (commentAdd) => {
 };
 
 exports.incrementArticleVotes = (article_id, inc) => {
-  if (inc === null || inc === undefined) {
-    return Promise.reject({ status: 400, msg: 'Invalid increment vote value' });
+  if (isNaN(inc)) {
+    return Promise.reject({ status: 400, msg: 'Invalid vote value' });
   }
-
+  
   const sql = `
     UPDATE articles
     SET votes = votes + $2
@@ -88,7 +88,7 @@ exports.incrementArticleVotes = (article_id, inc) => {
   return db.query(sql, [article_id, inc])
     .then(({ rows }) => {
       if(rows.length === 0) {
-        return Promise.reject({ status: 404, msg: 'No articles found' });
+        return Promise.reject({ status: 404, msg: 'Article not found' });
       }
       return rows[0];
     });
