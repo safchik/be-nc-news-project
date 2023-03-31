@@ -3,6 +3,7 @@ const { fetchTopics,
   fetchArticles,
   fetchComments,
   addNewComment,
+  incrementArticleVotes
   
 } = require("../models/models")
 
@@ -90,3 +91,16 @@ exports.postComments = (req, res, next) => {
       })
   }
 };
+
+exports.updateArticle = (req, res, next) => {
+  const { article_id } = req.params;
+  const { inc_votes } = req.body;
+
+  incrementArticleVotes(article_id, inc_votes)
+    .then(updatedArticle => {
+      res.status(200).send({ article: updatedArticle});
+    })
+    .catch(next);
+};
+
+
