@@ -3,8 +3,8 @@ const { fetchTopics,
   fetchArticles,
   fetchComments,
   addNewComment,
-  incrementArticleVotes
-  
+  incrementArticleVotes,
+  deleteCommentById
 } = require("../models/models")
 
 
@@ -101,6 +101,17 @@ exports.updateArticle = (req, res, next) => {
       res.status(200).send({ article: updatedArticle});
     })
     .catch(next);
+};
+
+exports.removeComment = (req, res, next) => {
+  const { comment_id } = req.params;
+  deleteCommentById(comment_id)
+    .then(() => {
+      res.sendStatus(204);
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
 
 

@@ -338,7 +338,7 @@ describe('PATCH /api/articles/:article_id', () => {
         });
     });
 
-    test('responds with updated article', () => {
+    it('responds with updated article', () => {
         const articleId = 1;
         return request(app)
           .patch(`/api/articles/${articleId}`)
@@ -376,7 +376,7 @@ describe('PATCH /api/articles/:article_id', () => {
         });
     });
     
-    it('returns the article without any changes', () => {
+    it('returns the article without any changes when the vote increment or decrement is 0', () => {
         const articleId = 1;
         const votes = data.articleData[0].votes;
         return request(app)
@@ -390,5 +390,38 @@ describe('PATCH /api/articles/:article_id', () => {
     });
 });
 
-
+describe('DELETE /api/comments/:comment_id', () => {
+    it('should respond with status 204 and delete the given comment by its ID', () => {
+      const comment_id = 1;
+      return request(app)
+        .delete(`/api/comments/${comment_id}`)
+        .expect(204)
+        .then(() => {
+          return request(app)
+            .get(`/api/comments/${comment_id}`)
+            .expect(404)
+        });
+    });
+  
+    it('should respond with an error status 400 if the comment_id is not a number', () => {
+      const comment_id = 'not_a_number';
+      return request(app)
+        .delete(`/api/comments/${comment_id}`)
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe('Invalid comment ID');
+        });
+    });
+  
+    it('should respond with an error status 404 if the comment with the given ID is not found', () => {
+      const comment_id = 999;
+      return request(app)
+        .delete(`/api/comments/${comment_id}`)
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toBe('Comment not found');
+        });
+    });
+  });
+  
   
