@@ -16,7 +16,7 @@ const app = express();
 app.use(express.json());
 
 app.get("/api", (req, res) => {
-  fs.readFile('endpooints.json', 'utf-8', (err, data) => {
+  fs.readFile('endpoints.json', 'utf-8', (err, data) => {
     send(data);
   })
   res.status(200).send({ msg: "Server is up and running!" });
