@@ -38,12 +38,15 @@ Bear in mind, handling bad inputs from clients doesn't necessarily have to lead 
 ## Available Routes
 
 ### GET `/api/topics`
-
--
+Status: 200 OK
+Possible errors:
+  None
 
 ### GET `/api/users/:username`
-
--
+Status: 200 OK
+Possible errors:
+  User with username does not exist in the database:
+    Status: 404 Not Found;
 
 ### GET `/api/articles/:article_id`
 
@@ -56,12 +59,22 @@ Bear in mind, handling bad inputs from clients doesn't necessarily have to lead 
 - Invalid `inc_votes` (e.g. `{ inc_votes : "cat" }`)
 
 ### POST `/api/articles/:article_id/comments`
-
--
+Status: 201 Created
+Possible errors:
+  article_id is not a number:
+    Status: 400 Bad Request;
+  article_id that does not exist in the database:
+    Status: 404 Not Found;
+  Required fields (author, body) missing from request body:
+    Status: 400 Bad Request;
 
 ### GET `/api/articles/:article_id/comments`
-
--
+Status: 200 OK
+Possible errors:
+  article_id is not a number:
+    Status: 400 Bad Request;
+  article_id that does not exist in the database:
+    Status: 404 Not Found;
 
 ### GET `/api/articles`
 
@@ -72,13 +85,27 @@ Bear in mind, handling bad inputs from clients doesn't necessarily have to lead 
   - `topic` that exists but does not have any articles associated with it
 
 ### PATCH `/api/comments/:comment_id`
-
--
+Status: 200 OK
+Possible errors:
+  inc_votes not on request body:
+    Status: 400 Bad Request;
+  inc_votes is not a number:
+    Status: 400 Bad Request;
+  comment_id is not a number:
+    Status: 400 Bad Request;
+  comment_id that does not exist in the database:
+    Status: 404 Not Found;
 
 ### DELETE `/api/comments/:comment_id`
-
--
+Status: 204 No Content
+Possible errors:
+  comment_id is not a number:
+    Status: 400 Bad Request;
+  comment_id that does not exist in the database:
+    Status: 404 Not Found;
 
 ### GET `/api`
-
+Status: 200 OK
+Possible errors:
+  None;
 -
