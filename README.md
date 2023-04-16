@@ -4,20 +4,6 @@
 
 We will be building an API for the purpose of accessing application data programmatically. The intention here is to mimic the building of a real world backend service, which should provide this information to the front end architecture.
 
-## Features
-
-The API has several endpoints that allow clients to:
-
-Retrieve a list of topics;
-Retrieve a list of articles;
-Retrieve an article by its ID;
-Retrieve a list of comments for an article;
-Post a new comment to an article;
-Update an article's vote count;
-Delete a comment.
-
-Each endpoint has been designed to handle various possible errors and send appropriate HTTP status codes to the client.
-
 ## Installation
 
 To run the API locally, you'll need to have the following software installed:
@@ -61,6 +47,8 @@ The API has the following endpoints:
 `POST /api/articles/:article_id/comments`: Post a new comment to an article
 `PATCH /api/articles/:article_id`: Update an article's vote count
 `DELETE /api/comments/:comment_id`: Delete a comment
+
+Each endpoint has been designed to handle various possible errors and send appropriate HTTP status codes to the client.
 
 For more information on each endpoint and how to use them, see the endpoints.json file.
 
