@@ -6,12 +6,22 @@
     "description": "serves an array of all topics",
     "queries": [],
     "exampleResponse": {
-      "topics": [{ "slug": "football", "description": "Footie!" }]
+      "topics": [
+        {
+          "slug": "football",
+          "description": "Footie!"
+        }
+      ]
     }
   },
   "GET /api/articles": {
     "description": "serves an array of all topics",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "queries": [
+      "author",
+      "topic",
+      "sort_by",
+      "order"
+    ],
     "exampleResponse": {
       "articles": [
         {
@@ -22,6 +32,95 @@
           "created_at": 1527695953341
         }
       ]
+    }
+  },
+  "GET /api/users": {
+    "description": "serves an array of objects",
+    "queries": [],
+    "exampleResponse": {
+      "username": "tickle122",
+      "name": "Tom Tickle",
+      "avatar_url": "https://vignette.wikia.nocookie.net/mrmen/images/d/d6/Mr-Tickle-9a.png/revision/latest?cb=20180127221953"
+    }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "serves a specific article by its ID",
+    "queries": [],
+    "exampleResponse": {
+      "article": {
+        "article_id": 1,
+        "title": "Running a Node App",
+        "topic": "coding",
+        "author": "jessjelly",
+        "body": "This is part two of a series on how to get up and running with Systemd and Node.js. This part dives deeper into how to successfully run your app with systemd long-term, and how to set it up in a production environment.",
+        "created_at": 1604728980000,
+        "votes": 0,
+        "article_img_url": "https://images.pexels.com/photos/11035380/pexels-photo-11035380.jpeg?w=700&h=700",
+      }
+    }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "serves an array of comments for a specific article by its ID",
+    "queries": [
+      "sort_by",
+      "order"
+    ],
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 19,
+          "body": "Nobis consequatur animi. Ullam nobis quaerat voluptates veniam.",
+          "votes": 7,
+          "author": "grumpy19",
+          "article_id": 4,
+          "created_at": 1577890920000,
+        }
+      ]
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "creates a new comment for a specific article by its ID",
+    "queries": [],
+    "exampleRequest": {
+      "username": "butter_bridge",
+      "body": "This article is great!"
+    },
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 19,
+        "author": "butter_bridge",
+        "body": "This article is great!",
+        "votes": 0,
+        "created_at": 1621242145644,
+        "article_id": 1
+      }
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "updates a specific article by its ID",
+    "queries": [],
+    "exampleRequest": {
+      "title": "New Title"
+    },
+    "exampleResponse": {
+      "article": {
+        "title": "Using React Native: One Year Later",
+        "topic": "coding",
+        "author": "tickle122",
+        "body": "When I interviewed for the iOS developer opening at Discord last spring, the tech lead Stanislav told me: React Native is the future. We will use it to build our iOS app from scratch as soon as it becomes public. As a native iOS developer, I strongly doubted using web technologies to build mobile apps because of my previous experiences with tools like PhoneGap. But after learning and using React Native for a while, I am glad we made that decision.",
+        "created_at": 1602984360000,
+        "votes": 100,
+        "article_id": 1
+      }
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes a specific comment by its ID",
+    "queries": [],
+    "exampleResponse": {
+      "deleted": {
+        "comment_id": 1
+      }
     }
   }
 }
