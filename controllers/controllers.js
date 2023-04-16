@@ -31,17 +31,14 @@ exports.getArticleById = (req, res, next) => {
     .then((article) => {
       res.status(200).send({ article });
     })
-    .catch((err) => {
-      if (err.status === 404) {
-        res.status(404).send({ msg: err.msg });
-      } else {
-        next(err);
-      }
-    });
+    .catch(next);
 };
 
 exports.getArticles = (req, res, next) => {
-  fetchArticles()
+
+  const { topic, sort_by, order } = req.query;
+
+  fetchArticles(topic, sort_by, order)
     .then((articles) => {
       res.status(200).send({ articles });
     })
@@ -55,12 +52,15 @@ exports.getComments = (req, res, next) => {
     return next({ status: 400, msg: 'Invalid article ID' });
   }
 
-  fetchComments(article_id)
-    .then((comments) => {
-      res.status(200).send({ comments });
-    })
-    .catch((err) => {
-      next(err);
+  fetchArticleById(article_id)
+    .then((article) => {
+      return fetchComments(article.article_id)
+        .then((comments) => {
+          res.status(200).send({ comments });
+        })
+        .catch((err) => {
+          next(err);
+        });
     });
 };
 
@@ -71,7 +71,7 @@ exports.postComments = (req, res, next) => {
     res.status(400).send({ msg: "Invalid request body" });
   } else if (!commentToAdd.username) {
     res.status(400).send({ msg: "Username is required" });
-  } else if(isNaN(req.params.article_id)) {
+  } else if (isNaN(req.params.article_id)) {
     res.status(400).send({ msg: "Invalid article ID" });
   } else {
     fetchArticleById(req.params.article_id)
@@ -99,7 +99,7 @@ exports.updateArticle = (req, res, next) => {
 
   incrementArticleVotes(article_id, inc_votes)
     .then(updatedArticle => {
-      res.status(200).send({ article: updatedArticle});
+      res.status(200).send({ article: updatedArticle });
     })
     .catch(next);
 };
@@ -120,5 +120,7 @@ exports.getAllUsers = (req, res, next) => {
     .then((users) => {
       res.status(200).send({ users });
     })
-    .catch(next);
+    .catch((err) => {
+      next(err);
+    });
 };
