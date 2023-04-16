@@ -1,13 +1,14 @@
 const express = require("express");
-const {getTopics, 
-      getArticleById, 
-      getArticles, 
-      getComments, 
-      postComments,
-      updateArticle,
-      removeComment,
-      getAllUsers
- } = require('./controllers/controllers');
+
+const { getTopics,
+  getArticleById,
+  getArticles,
+  getComments,
+  postComments,
+  updateArticle,
+  removeComment,
+  getAllUsers
+} = require('./controllers/controllers');
 
 const app = express();
 app.use(express.json());
@@ -20,7 +21,7 @@ app.get(`/api/topics`, getTopics);
 
 app.get('/api/articles/:article_id', getArticleById);
 
-app.get('/api/articles', getArticles); 
+app.get('/api/articles', getArticles);
 
 app.get(`/api/articles/:article_id/comments`, getComments);
 
@@ -33,11 +34,11 @@ app.delete('/api/comments/:comment_id', removeComment);
 app.get('/api/users', getAllUsers);
 
 app.all('/*', (req, res) => {
-  res.status(404).send({msg: 'Route not found'})
+  res.status(404).send({ msg: 'Route not found' })
 });
 
 app.use((err, req, res, next) => {
-  if(err.status === 404) {
+  if (err.status === 404) {
     res.status(404).send({ msg: err.msg });
   } else if (err.status === 400) {
     res.status(400).send({ msg: err.msg });
